@@ -39,7 +39,7 @@ st.subheader("Geavanceerde analyse van welzijns- en tevredenheidsstatistieken")
 st.sidebar.title("📌 Navigatie")
 st.sidebar.markdown("<h1 style='color: red;'>TEAM 7</h1>", unsafe_allow_html=True)
 page = st.sidebar.radio("Ga naar:",
-                       ["Dashboard", "Grafieken", "Sunburst", "Statistische Analyse", "Kaarten Vergelijken"],
+                       ["Dashboard", "Welzijn Statistieken", "Welzijn per Opleidingsniveau", "Statistische Analyse", "Kaarten Vergelijken"],
                        index=0)
  
 # API configuratie
@@ -199,8 +199,8 @@ if not df.empty and not new_df.empty:
                         delta=f"{(value - combined_df[selected_meting].mean()):.2f} vs totaal" if name == "Gemiddelde" else None
                     )
  
-        elif page == "Welzijn Statestieken":
-            st.header("📊 Interactieve Visualisaties")
+        elif page == "Welzijn Statistieken":
+            st.header("📊 Welzijn Statistieken")
             
             tab1, tab2, tab3 = st.tabs(["Lijnplot", "Histogram", "Boxplot"])
             
@@ -214,14 +214,14 @@ if not df.empty and not new_df.empty:
                     color="Kenmerken",
                     markers=True,
                     line_shape="spline",
-                    title="Gemiddelde scores per jaar"
+                    title="Gemiddelde welzijnsscores per jaar"
                 )
                 st.plotly_chart(fig, use_container_width=True)
             
             with tab2:
                 st.subheader("Histogram")
                 fig = px.histogram(filtered_df, x=selected_meting, color="Kenmerken", nbins=20, marginal="box")
-                fig.update_layout(yaxis_title="Aantal")
+                fig.update_layout(yaxis_title="Aantal", title="Verdeling van welzijnsscores")
                 st.plotly_chart(fig, use_container_width=True)
             
             with tab3:
@@ -232,12 +232,12 @@ if not df.empty and not new_df.empty:
                     y=selected_meting,
                     color="Kenmerken",
                     points="outliers",
-                    title="Spreiding van scores per groep"
+                    title="Spreiding van welzijnsscores"
                 )
                 st.plotly_chart(fig, use_container_width=True)
  
-        elif page == "Sunburst":
-            st.header("🌞 Sunburst Diagram")
+        elif page == "Welzijn per Opleidingsniveau":
+            st.header("🌞 Welzijn per Opleidingsniveau")
             
             container = st.container()
             with container:
@@ -250,12 +250,12 @@ if not df.empty and not new_df.empty:
                         path=["Kenmerken", "Perioden"],
                         values=selected_meting,
                         color=selected_meting,
-                        title="Verdeling per groep en jaar"
+                        title="Welzijnsverdeling per opleidingsniveau en jaar"
                     )
                     st.plotly_chart(fig, use_container_width=True)
                 
                 with col2:
-                    st.subheader("Legenda")
+                    st.subheader("Statistieken per opleidingsniveau")
                     st.dataframe(
                         df_avg.groupby("Kenmerken")[selected_meting]
                         .describe().style.background_gradient(cmap='Blues')
@@ -329,36 +329,36 @@ if not df.empty and not new_df.empty:
             
             # --- Onderwijskaart ---
             with col1:
-                fig1, ax1 = plt.subplots(figsize=(5, 6))
+                fig1, ax1 = plt.subplots(figsize=(10, 12))
                 onderwijs_merged.plot(column=keuze, cmap="Blues", linewidth=0.5, ax=ax1, edgecolor="gray", legend=False)
-                ax1.set_title(f"% {keuze} ({selected_jaar[0]}-{selected_jaar[1]})", fontsize=12)
+                ax1.set_title(f"% {keuze} ({selected_jaar[0]}-{selected_jaar[1]})", fontsize=14)
                 ax1.axis("off")
                 ax1.set_aspect("equal")
                 sm1 = plt.cm.ScalarMappable(cmap=cm.Blues, norm=colors.Normalize(
                     vmin=onderwijs_merged[keuze].min(), vmax=onderwijs_merged[keuze].max()))
                 sm1._A = []
                 cbar1 = fig1.colorbar(sm1, ax=ax1, orientation='vertical', fraction=0.04, pad=0.01)
-                cbar1.set_label(f"% {keuze}", fontsize=9)
-                cbar1.ax.tick_params(labelsize=8)
+                cbar1.set_label(f"% {keuze}", fontsize=12)
+                cbar1.ax.tick_params(labelsize=10)
                 st.pyplot(fig1)
             
             # --- Gelukkaart ---
             with col2:
-                fig2, ax2 = plt.subplots(figsize=(5, 6))
+                fig2, ax2 = plt.subplots(figsize=(10, 12))
                 geluk_merged.plot(column="Geluksscore", cmap="Blues", linewidth=0.5, ax=ax2, edgecolor="gray", legend=False)
-                ax2.set_title("Geluksscore", fontsize=12)
+                ax2.set_title("Geluksscore", fontsize=14)
                 ax2.axis("off")
                 ax2.set_aspect("equal")
                 sm2 = plt.cm.ScalarMappable(cmap=cm.Blues, norm=colors.Normalize(
                     vmin=geluk_merged["Geluksscore"].min(), vmax=geluk_merged["Geluksscore"].max()))
                 sm2._A = []
                 cbar2 = fig2.colorbar(sm2, ax=ax2, orientation='vertical', fraction=0.04, pad=0.01)
-                cbar2.set_label("Geluksscore", fontsize=9)
-                cbar2.ax.tick_params(labelsize=8)
+                cbar2.set_label("Geluksscore", fontsize=12)
+                cbar2.ax.tick_params(labelsize=10)
                 st.pyplot(fig2)
  
     else:
         st.warning("Geen gegevens beschikbaar voor de geselecteerde filters")
 else:
     st.error("Probleem met data laden. Controleer de data bronnen.")
-
+ 
