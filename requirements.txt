@@ -1,9 +1,13 @@
-streamlit
-folium
-streamlit-folium
-geopy
 pandas
+streamlit
+requests
 plotly
+scipy
+statsmodels
+numpy
+geopandas
+matplotlib
+
 
 
 
